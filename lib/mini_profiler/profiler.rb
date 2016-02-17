@@ -573,13 +573,13 @@ Append the following to your query string:
     def get_profile_script(env)
       path = if env["action_controller.instance"]
                if Rails.application.secrets.rack_mini_profiler.present? && Rails.application.secrets.rack_mini_profiler == true
-                 env["action_controller.instance"].url_for("/#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}")
+                 env["action_controller.instance"].url_for("#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}")
                else
                  env["action_controller.instance"].url_for("#{@config.base_url_path}")
                end
              else
                if Rails.application.secrets.rack_mini_profiler.present? && Rails.application.secrets.rack_mini_profiler == true
-                 "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}/#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}"
+                 "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}"
                else
                  "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}#{@config.base_url_path}"
                end
