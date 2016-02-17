@@ -572,10 +572,18 @@ Append the following to your query string:
     # * you do not want script to be automatically appended for the current page. You can also call cancel_auto_inject
     def get_profile_script(env)
       path = if env["action_controller.instance"]
-        env["action_controller.instance"].url_for("#{@config.base_url_path}")
-      else
-        "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}#{@config.base_url_path}"
-      end
+               if Rails.application.secrets.rack_mini_profiler.present? && Rails.application.secrets.rack_mini_profiler == true
+                 env["action_controller.instance"].url_for("/#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}")
+               else
+                 env["action_controller.instance"].url_for("#{@config.base_url_path}")
+               end
+             else
+               if Rails.application.secrets.rack_mini_profiler.present? && Rails.application.secrets.rack_mini_profiler == true
+                 "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}/#{Rails.application.secrets.relative_url_root}#{@config.base_url_path}"
+               else
+                 "#{env['RACK_MINI_PROFILER_ORIGINAL_SCRIPT_NAME']}#{@config.base_url_path}"
+               end
+             end
 
       settings = {
        :path            => path,
